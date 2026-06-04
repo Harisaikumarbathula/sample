@@ -7,6 +7,7 @@ import json
 import traceback
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
+from collections import Counter
 
 def detect_delimiter(filepath):
     """
@@ -62,6 +63,8 @@ def analyze_large_file_async(db_path, upload_id, filepath):
         columns = sample_df.columns.tolist()
         col_count = len(columns)
         numeric_cols = sample_df.select_dtypes(include=[np.number]).columns.tolist()
+        categorical_cols = [col for col in columns if col not in numeric_cols]
+        cat_value_counts = {col: Counter() for col in categorical_cols}
         
         # Fit Isolation Forest and scaler on sample if we have numeric columns
         scaler = None
@@ -120,6 +123,11 @@ def analyze_large_file_async(db_path, upload_id, filepath):
             # Missing values
             for col in columns:
                 missing_counts[col] += int(chunk[col].isnull().sum())
+                
+            # Categorical value counts (limit unique tracking per column to prevent RAM issues)
+            for col in categorical_cols:
+                if len(cat_value_counts[col]) < 10000:
+                    cat_value_counts[col].update(chunk[col].dropna().astype(str))
                 
             # Numeric stats
             for col in numeric_cols:
@@ -210,7 +218,7 @@ def analyze_large_file_async(db_path, upload_id, filepath):
             if types > 1:
                 errors.append(f"Mixed data types detected in column '{col}'.")
                 
-        # Calculate column means to store in database for quick imputation later
+        # Calculate column stats to store in database for quick imputation later
         column_stats = {}
         for col in numeric_cols:
             cnt = numeric_counts[col]
@@ -219,6 +227,15 @@ def analyze_large_file_async(db_path, upload_id, filepath):
                 'min': numeric_mins[col],
                 'max': numeric_maxs[col]
             }
+        for col in categorical_cols:
+            if cat_value_counts[col]:
+                column_stats[col] = {
+                    'mode': cat_value_counts[col].most_common(1)[0][0]
+                }
+            else:
+                column_stats[col] = {
+                    'mode': 'N/A'
+                }
 
         # Save all results to the database
         conn = sqlite3.connect(db_path, timeout=30.0)
@@ -313,12 +330,18 @@ def clean_large_file_async(db_path, upload_id, input_filepath, output_filepath, 
                     elif strategy == 'median':
                         median_val = column_stats.get(col, {}).get('median', chunk[col].median())
                         chunk[col] = chunk[col].fillna(median_val)
+                    elif strategy == 'mode':
+                        mode_val = column_stats.get(col, {}).get('mode', 'N/A')
+                        chunk[col] = chunk[col].fillna(mode_val)
                     elif strategy == 'forward_fill':
                         chunk[col] = chunk[col].ffill()
                     elif strategy == 'backward_fill':
                         chunk[col] = chunk[col].bfill()
                     elif strategy == 'constant':
                         chunk[col] = chunk[col].fillna('N/A')
+                    elif strategy == 'custom_constant':
+                        custom_val = fill_missing.get('custom_value', 'Unknown')
+                        chunk[col] = chunk[col].fillna(custom_val)
             
             # 2. Deduplication
             if remove_dup:

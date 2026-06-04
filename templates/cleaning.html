@@ -49,10 +49,16 @@
                         <select name="strategy" class="form-select border-gray-300" required>
                             <option value="mean">Mean (Numerical Only)</option>
                             <option value="median">Median (Numerical Only)</option>
+                            <option value="mode">Mode (Most Frequent - Text/Categorical)</option>
                             <option value="forward_fill">Forward Fill (Temporal)</option>
                             <option value="backward_fill">Backward Fill (Temporal)</option>
                             <option value="constant">Constant Value ("N/A")</option>
+                            <option value="custom_constant">Custom Constant (Text/Numerical)</option>
                         </select>
+                    </div>
+                    <div class="col-12 d-none" id="customValueContainer">
+                        <label for="custom_value" class="form-label small fw-bold text-gray-700">Custom String or Numeric Value</label>
+                        <input type="text" name="custom_value" id="custom_value" class="form-control border-gray-300" placeholder="e.g. Unknown, Missing, 0">
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold mt-2">
@@ -88,4 +94,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('select[name="strategy"]').change(function() {
+            if ($(this).val() === 'custom_constant') {
+                $('#customValueContainer').removeClass('d-none');
+                $('#custom_value').attr('required', true);
+            } else {
+                $('#customValueContainer').addClass('d-none');
+                $('#custom_value').removeAttr('required');
+            }
+        });
+    });
+</script>
 {% endblock %}

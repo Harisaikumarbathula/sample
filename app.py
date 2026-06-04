@@ -276,7 +276,12 @@ def cleaning():
         elif action == 'fill_missing':
             col = request.form.get('column')
             strategy = request.form.get('strategy')
-            operations['fill_missing'] = {'column': col, 'strategy': strategy}
+            custom_val = request.form.get('custom_value', 'Unknown')
+            operations['fill_missing'] = {
+                'column': col,
+                'strategy': strategy,
+                'custom_value': custom_val
+            }
             flash(f'Missing value imputation job for column {col} started in background!', 'info')
             
         # Update job status in database to trigger progress screen
