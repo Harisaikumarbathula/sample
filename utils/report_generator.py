@@ -15,7 +15,7 @@ class DataQualityReport(FPDF):
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, 'Page ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
 
-def generate_report(df, filename, metrics, quality_score, errors):
+def generate_report(filename, metrics, quality_score, errors, row_count, col_count, duplicate_count):
     """
     Generates a PDF data quality report.
     """
@@ -42,9 +42,9 @@ def generate_report(df, filename, metrics, quality_score, errors):
     pdf.set_font('Arial', 'B', 12)
     pdf.cell(0, 10, 'Data Summary', 0, 1, 'L')
     pdf.set_font('Arial', '', 10)
-    pdf.cell(0, 10, f'Total Rows: {len(df)}', 0, 1, 'L')
-    pdf.cell(0, 10, f'Total Columns: {len(df.columns)}', 0, 1, 'L')
-    pdf.cell(0, 10, f'Duplicate Rows: {df.duplicated().sum()}', 0, 1, 'L')
+    pdf.cell(0, 10, f'Total Rows: {row_count}', 0, 1, 'L')
+    pdf.cell(0, 10, f'Total Columns: {col_count}', 0, 1, 'L')
+    pdf.cell(0, 10, f'Duplicate Rows: {duplicate_count}', 0, 1, 'L')
     pdf.ln(5)
     
     # 4. Column-wise metrics

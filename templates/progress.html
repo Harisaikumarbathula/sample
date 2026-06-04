@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .progress-container {
+        max-width: 700px;
+        margin: 4rem auto;
+    }
+    
+    .status-card {
+        border-radius: 1.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+        padding: 3rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .status-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.12);
+    }
+
+    .custom-progress-bar {
+        height: 12px;
+        border-radius: 10px;
+        background-color: var(--gray-200);
+        overflow: hidden;
+        position: relative;
+        margin: 2rem 0;
+    }
+
+    .custom-progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #4e73df 0%, #224abe 100%);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(78, 115, 223, 0.5);
+        transition: width 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    .pulse-loader {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 2rem;
+        background: linear-gradient(135deg, var(--primary) 0%, #224abe 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        box-shadow: 0 0 20px rgba(78, 115, 223, 0.4);
+        z-index: 1;
+    }
+
+    .pulse-loader::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: inherit;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transform: scale(1);
+        animation: pulse 2s infinite;
+        opacity: 0.4;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 0.4;
+        }
+        100% {
+            transform: scale(1.6);
+            opacity: 0;
+        }
+    }
+
+    .step-list {
+        text-align: left;
+        margin-top: 2.5rem;
+        border-top: 1px solid var(--gray-200);
+        padding-top: 2rem;
+    }
+
+    .step-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        color: var(--gray-500);
+        transition: all 0.3s ease;
+    }
+
+    .step-item.active {
+        color: var(--primary);
+        font-weight: 700;
+    }
+
+    .step-item.completed {
+        color: var(--success);
+    }
+
+    .step-item i {
+        margin-right: 15px;
+        font-size: 1.1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="progress-container fade-in-up">
+    <div class="status-card">
+        <div class="pulse-loader" id="loaderIcon">
+            <i class="fas fa-microchip fa-2x fa-spin"></i>
+        </div>
+        
+        <h3 class="fw-bold mb-1" id="statusTitle">Executing AI Diagnostics</h3>
+        <p class="text-muted small" id="fileLabel">Processing: <strong>{{ filename }}</strong></p>
+        
+        <div class="custom-progress-bar">
+            <div class="custom-progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="d-flex justify-content-between text-muted small fw-bold">
+            <span id="statusText">Preparing file stream...</span>
+            <span id="percentText">0%</span>
+        </div>
+        
+        <div class="step-list">
+            <div class="step-item" id="step-prepare">
+                <i class="fas fa-circle-notch fa-spin status-icon"></i>
+                <span>Step 1: Detect delimiter and sample dataset</span>
+            </div>
+            <div class="step-item" id="step-ml">
+                <i class="far fa-circle status-icon"></i>
+                <span>Step 2: Calibrate anomaly models (Isolation Forest)</span>
+            </div>
+            <div class="step-item" id="step-stream">
+                <i class="far fa-circle status-icon"></i>
+                <span>Step 3: Streaming chunk traversal & SQLite deduplication</span>
+            </div>
+            <div class="step-item" id="step-complete">
+                <i class="far fa-circle status-icon"></i>
+                <span>Step 4: Compiling quality scoring and reporting</span>
+            </div>
+        </div>
+
+        <div id="errorArea" class="mt-4 d-none">
+            <div class="alert alert-danger border-0 shadow-sm d-flex align-items-center text-start">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h6 class="fw-bold mb-1">Process Failed</h6>
+                    <p class="mb-0 small" id="errorMsg"></p>
+                </div>
+            </div>
+            <a href="/" class="btn btn-outline-danger mt-3 w-100 py-2">
+                <i class="fas fa-arrow-left me-2"></i>Return to Upload
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        const uploadId = {{ upload_id }};
+        const statusUrl = `/job_status/${uploadId}`;
+        let intervalId;
+
+        function updateSteps(progress, status) {
+            const stepPrepare = $('#step-prepare');
+            const stepMl = $('#step-ml');
+            const stepStream = $('#step-stream');
+            const stepComplete = $('#step-complete');
+
+            // Reset step icons helper
+            function setStatus(element, state) {
+                const icon = element.find('.status-icon');
+                element.removeClass('active completed text-muted');
+                
+                if (state === 'active') {
+                    element.addClass('active');
+                    icon.attr('class', 'fas fa-circle-notch fa-spin status-icon');
+                } else if (state === 'completed') {
+                    element.addClass('completed');
+                    icon.attr('class', 'fas fa-check-circle status-icon');
+                } else {
+                    element.addClass('text-muted');
+                    icon.attr('class', 'far fa-circle status-icon');
+                }
+            }
+
+            if (status === 'completed') {
+                setStatus(stepPrepare, 'completed');
+                setStatus(stepMl, 'completed');
+                setStatus(stepStream, 'completed');
+                setStatus(stepComplete, 'completed');
+                return;
+            }
+
+            if (progress < 15) {
+                setStatus(stepPrepare, 'active');
+                setStatus(stepMl, 'pending');
+                setStatus(stepStream, 'pending');
+                setStatus(stepComplete, 'pending');
+            } else if (progress < 20) {
+                setStatus(stepPrepare, 'completed');
+                setStatus(stepMl, 'active');
+                setStatus(stepStream, 'pending');
+                setStatus(stepComplete, 'pending');
+            } else if (progress < 90) {
+                setStatus(stepPrepare, 'completed');
+                setStatus(stepMl, 'completed');
+                setStatus(stepStream, 'active');
+                setStatus(stepComplete, 'pending');
+            } else {
+                setStatus(stepPrepare, 'completed');
+                setStatus(stepMl, 'completed');
+                setStatus(stepStream, 'completed');
+                setStatus(stepComplete, 'active');
+            }
+        }
+
+        function pollStatus() {
+            $.getJSON(statusUrl, function(data) {
+                const progress = data.progress || 0;
+                const status = data.status;
+                const error = data.error_message;
+
+                // Update Progress bar & text
+                $('#progressFill').css('width', progress + '%');
+                $('#percentText').text(Math.round(progress) + '%');
+
+                // Dynamic Status Message Updates
+                if (progress < 15) {
+                    $('#statusText').text('Analyzing file delimiter and generating head sample...');
+                } else if (progress < 20) {
+                    $('#statusText').text('Configuring Isolation Forest anomaly detection...');
+                } else if (progress < 90) {
+                    $('#statusText').text(`Analyzing data stream in memory chunks (${Math.round(progress)}%)...`);
+                } else {
+                    $('#statusText').text('Saving statistics and building quality reports...');
+                }
+
+                updateSteps(progress, status);
+
+                if (status === 'completed') {
+                    clearInterval(intervalId);
+                    $('#statusText').text('Analysis complete! Redirecting...');
+                    $('#loaderIcon').html('<i class="fas fa-check fa-2x"></i>').css('background', 'var(--success)');
+                    setTimeout(function() {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else if (status === 'failed') {
+                    clearInterval(intervalId);
+                    $('#loaderIcon').html('<i class="fas fa-times fa-2x"></i>').css('background', 'var(--danger)');
+                    $('#statusTitle').text('Analysis Failed');
+                    $('#statusText').text('Error occurred during execution.');
+                    $('#errorMsg').text(error || 'An unexpected error occurred during processing.');
+                    $('#errorArea').removeClass('d-none');
+                }
+            }).fail(function() {
+                clearInterval(intervalId);
+                $('#errorMsg').text('Unable to establish connection to background worker.');
+                $('#errorArea').removeClass('d-none');
+            });
+        }
+
+        // Poll every 1 second
+        pollStatus();
+        intervalId = setInterval(pollStatus, 1000);
+    });
+</script>
+{% endblock %}
