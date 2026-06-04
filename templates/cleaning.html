@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4 align-items-center fade-in-up">
+    <div class="col-md-8">
+        <h2 class="header-title mb-0">Cleaning Studio</h2>
+        <p class="text-muted small">Refine and sanitize your dataset with statistical intelligence</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4 fade-in-up" style="animation-delay: 0.1s;">
+    <!-- Duplicate Handling -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 font-weight-bold text-primary fw-bold text-uppercase small">Identity Resolution</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-4">Eliminate redundant records to ensure unique entity representation in your analytics.</p>
+                <form action="/cleaning" method="POST">
+                    <input type="hidden" name="action" value="remove_duplicates">
+                    <button type="submit" class="btn btn-warning w-100 py-2 shadow-sm fw-bold">
+                        <i class="fas fa-clone me-2"></i>Deduplicate Dataset
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Missing Value Handling -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 font-weight-bold text-primary fw-bold text-uppercase small">Statistical Imputation</h6>
+            </div>
+            <div class="card-body">
+                <form action="/cleaning" method="POST" class="row g-3">
+                    <input type="hidden" name="action" value="fill_missing">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-gray-700">Target Attribute</label>
+                        <select name="column" class="form-select border-gray-300" required>
+                            {% for col in columns %}
+                                <option value="{{ col }}">{{ col }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-gray-700">Imputation Strategy</label>
+                        <select name="strategy" class="form-select border-gray-300" required>
+                            <option value="mean">Mean (Numerical Only)</option>
+                            <option value="median">Median (Numerical Only)</option>
+                            <option value="forward_fill">Forward Fill (Temporal)</option>
+                            <option value="backward_fill">Backward Fill (Temporal)</option>
+                            <option value="constant">Constant Value ("N/A")</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100 py-2 shadow-sm fw-bold mt-2">
+                            <i class="fas fa-wand-magic-sparkles me-2"></i>Apply Transformation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4 fade-in-up" style="animation-delay: 0.2s;">
+    <div class="col-12 text-end">
+        <a href="/download_data" class="btn btn-success shadow-sm px-4 py-2 fw-bold">
+            <i class="fas fa-file-export me-2"></i>Export Sanitized Dataset
+        </a>
+    </div>
+</div>
+
+<div class="row fade-in-up" style="animation-delay: 0.3s;">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary fw-bold text-uppercase small">Transformation Preview</h6>
+                <span class="badge bg-gray-200 text-gray-700 fw-normal">Showing Top 10 Records</span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    {{ table_html|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

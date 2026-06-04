@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row mb-4 align-items-center fade-in-up">
+    <div class="col-md-8">
+        <h2 class="header-title mb-0">Export Intelligence</h2>
+        <p class="text-muted small">Generate and manage official documentation for your diagnostic results</p>
+    </div>
+</div>
+
+<div class="row fade-in-up" style="animation-delay: 0.1s;">
+    <!-- Main Report Card -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-lg text-center p-5 bg-gradient-primary h-100">
+            <div class="card-body">
+                <div class="bg-primary bg-opacity-10 p-4 rounded-circle d-inline-flex mb-4 shadow-sm">
+                    <i class="fas fa-file-pdf fa-5x text-primary"></i>
+                </div>
+                <h3 class="fw-bold mb-3">Diagnostic PDF</h3>
+                <p class="text-secondary mb-5 mx-auto" style="max-width: 350px;">
+                    A comprehensive, ready-to-print report containing reliability scores, 
+                    anomaly logs, and statistical summaries.
+                </p>
+                
+                {% if report_ready %}
+                <div class="d-grid gap-3">
+                    <a href="/download_report/{{ report_filename }}" class="btn btn-primary btn-lg py-3 shadow fw-bold">
+                        <i class="fas fa-download me-2"></i>Download Final Report
+                    </a>
+                    <a href="/reports" class="btn btn-outline-secondary btn-sm border-0">
+                        <i class="fas fa-sync-alt me-1"></i>Regenerate Latest
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status"></div>
+                    <p class="text-muted fw-bold">Synthesizing Diagnostic Data...</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Checklist -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3">
+                <h6 class="m-0 font-weight-bold text-primary fw-bold text-uppercase small">What's in the Report?</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-4 py-4 d-flex align-items-center border-0 border-bottom">
+                        <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 small">Reliability Engine Score</h6>
+                            <p class="mb-0 text-muted smaller">Overall data health percentage calculation.</p>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-4 py-4 d-flex align-items-center border-0 border-bottom">
+                        <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 small">Missing Value Matrices</h6>
+                            <p class="mb-0 text-muted smaller">Column-wise breakdown of data gaps.</p>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-4 py-4 d-flex align-items-center border-0 border-bottom">
+                        <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 small">ML Anomaly Detection Logs</h6>
+                            <p class="mb-0 text-muted smaller">Isolation Forest results for statistical outliers.</p>
+                        </div>
+                    </div>
+                    <div class="list-group-item px-4 py-4 d-flex align-items-center border-0">
+                        <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                            <i class="fas fa-check text-success"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 small">Smart Validation Rules</h6>
+                            <p class="mb-0 text-muted smaller">Automatically generated data governance rules.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-gray-100 border-0 py-3 text-center">
+                <small class="text-gray-600 fw-bold">Report Format: ISO Standard PDF v1.7</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

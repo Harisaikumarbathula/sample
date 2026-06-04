@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row fade-in-up">
+    <div class="col-12 text-center mb-5">
+        <h1 class="header-title display-4 mb-3 text-primary">An Intelligent Automated Data Quality Management System</h1>
+        <h2 class="h3 text-secondary fw-normal mb-4">for Reliable Data Analytics</h2>
+        <p class="text-muted lead mx-auto" style="max-width: 800px;">
+            Harness the power of Machine Learning to automate data validation, 
+            cleaning, and reliability scoring for your enterprise datasets.
+        </p>
+    </div>
+</div>
+
+<div class="row justify-content-center fade-in-up" style="animation-delay: 0.2s;">
+    <div class="col-xl-10">
+        <div class="row g-4">
+            <!-- Upload Card -->
+            <div class="col-lg-7">
+                <div class="card h-100 border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-3 me-3">
+                                <i class="fas fa-cloud-upload-alt text-primary fa-2x"></i>
+                            </div>
+                            <h4 class="fw-bold mb-0">Start New Analysis</h4>
+                        </div>
+                        
+                        <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                            <div class="file-upload-wrapper mb-4">
+                                <i class="fas fa-file-csv"></i>
+                                <p id="uploadText" class="fw-bold text-secondary">Drag and drop your dataset here or click to browse</p>
+                                <input type="file" name="file" id="inputGroupFile02" accept=".csv, .xlsx, .xls" required>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg py-3 shadow">
+                                    <i class="fas fa-microchip me-2"></i>Execute AI Diagnostics
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Card -->
+            <div class="col-lg-5">
+                <div class="card h-100 border-0 shadow-lg bg-dark text-white">
+                    <div class="card-body p-5">
+                        <h5 class="fw-bold mb-4 text-primary text-uppercase small letter-spacing">System Capabilities</h5>
+                        
+                        <div class="mb-4 d-flex align-items-start">
+                            <div class="bg-white bg-opacity-10 p-2 rounded me-3">
+                                <i class="fas fa-search-plus text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Anomaly Detection</h6>
+                                <p class="small text-white text-opacity-50 mb-0">Isolation Forest algorithms identify outliers with high precision.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 d-flex align-items-start">
+                            <div class="bg-white bg-opacity-10 p-2 rounded me-3">
+                                <i class="fas fa-magic text-warning"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Smart Imputation</h6>
+                                <p class="small text-white text-opacity-50 mb-0">Context-aware handling of missing values using statistical strategies.</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-0 d-flex align-items-start">
+                            <div class="bg-white bg-opacity-10 p-2 rounded me-3">
+                                <i class="fas fa-chart-line text-success"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1">Reliability Scoring</h6>
+                                <p class="small text-white text-opacity-50 mb-0">Proprietary scoring engine evaluates overall dataset health.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comprehensive About & Features Section -->
+<div class="row mt-5 pt-4 fade-in-up" style="animation-delay: 0.4s;">
+    <div class="col-12">
+        <div class="card border-0 shadow-lg overflow-hidden">
+            <div class="row g-0">
+                <div class="col-lg-4 bg-primary p-5 text-white d-flex flex-column justify-content-center">
+                    <h4 class="fw-bold mb-3">DataTrust AI</h4>
+                    <p class="text-white text-opacity-75 mb-4">
+                        An Intelligent Automated Data Quality Management System designed to solve enterprise-scale data reliability challenges through modern web technologies and machine learning.
+                    </p>
+                    <div class="mt-auto">
+                        <span class="badge bg-white text-primary px-3 py-2">Enterprise Edition</span>
+                        <span class="badge bg-white bg-opacity-25 text-white px-3 py-2 ms-2">v2.0 Stable</span>
+                    </div>
+                </div>
+                <div class="col-lg-8 p-5 bg-white">
+                    <h5 class="fw-bold mb-4 text-gray-800 text-uppercase small letter-spacing">Technical Architecture & Features</h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fab fa-python text-primary"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0">Flask Backend</h6>
+                            </div>
+                            <p class="small text-muted mb-0">High-performance Python API handling complex data transformations and ML inference.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fas fa-database text-success"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0">SQLite Persistence</h6>
+                            </div>
+                            <p class="small text-muted mb-0">Reliable metadata storage ensuring history tracking and data governance.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-info bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fas fa-brain text-info"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0">Isolation Forest ML</h6>
+                            </div>
+                            <p class="small text-muted mb-0">Unsupervised machine learning for identifying statistical outliers and anomalies.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fas fa-code text-warning"></i>
+                                </div>
+                                <h6 class="fw-bold mb-0">Modular Design</h6>
+                            </div>
+                            <p class="small text-muted mb-0">Clean, scalable code structure designed for high performance and future extensibility.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

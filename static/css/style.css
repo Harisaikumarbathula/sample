@@ -1,0 +1,201 @@
+:root {
+    --primary: #4e73df;
+    --success: #1cc88a;
+    --info: #36b9cc;
+    --warning: #f6c23e;
+    --danger: #e74a3b;
+    --secondary: #858796;
+    --light: #f8f9fc;
+    --dark: #5a5c69;
+    --sidebar-bg: #4e73df;
+    --sidebar-hover: #2e59d9;
+    --white: #ffffff;
+    --gray-100: #f8f9fc;
+    --gray-200: #eaecf4;
+    --gray-300: #dddfeb;
+    --gray-400: #d1d3e2;
+    --gray-500: #b7b9cc;
+    --gray-600: #858796;
+    --gray-700: #6e707e;
+    --gray-800: #5a5c69;
+    --gray-900: #3a3b45;
+}
+
+body {
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background: linear-gradient(180deg, var(--primary) 10%, #224abe 100%);
+    min-height: 100vh;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--white);
+    background-color: var(--sidebar-hover);
+}
+
+.sidebar .nav-link.active {
+    color: var(--white);
+    background-color: var(--sidebar-hover);
+    border-left: 5px solid var(--white);
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    margin-right: 12px;
+}
+
+/* Main Content Area */
+.main-content {
+    padding: 2.5rem;
+    transition: all 0.3s;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 1.25rem;
+    border-top-left-radius: 1rem !important;
+    border-top-right-radius: 1rem !important;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Header & Typography */
+.header-title {
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.5px;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 700;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 4px 6px rgba(78, 115, 223, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: var(--sidebar-hover);
+    border-color: var(--sidebar-hover);
+    transform: translateY(-1px);
+}
+
+/* Table Styling */
+.table-responsive {
+    border-radius: 0.75rem;
+}
+
+.table thead th {
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-color: var(--gray-200);
+    vertical-align: middle;
+}
+
+/* Progress Bars */
+.progress {
+    border-radius: 1rem;
+    background-color: var(--gray-200);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Custom File Upload Styling */
+.file-upload-wrapper {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border: 3px dashed var(--gray-400);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: var(--white);
+}
+
+.file-upload-wrapper:hover {
+    border-color: var(--primary);
+    background-color: var(--gray-100);
+}
+
+.file-upload-wrapper i {
+    font-size: 3rem;
+    color: var(--gray-500);
+    margin-bottom: 1rem;
+}
+
+.file-upload-wrapper input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Tooltips & Badges */
+.badge {
+    padding: 0.5em 0.8em;
+    border-radius: 0.5rem;
+    font-weight: 700;
+}
